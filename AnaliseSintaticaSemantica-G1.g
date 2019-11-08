@@ -1,0 +1,2 @@
+grammar AnaliseSintaticaSemantica-G1;
+
