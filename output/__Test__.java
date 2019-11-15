@@ -6,12 +6,12 @@ import org.antlr.runtime.debug.DebugEventSocketProxy;
 public class __Test__ {
 
     public static void main(String args[]) throws Exception {
-        analiseSintaticaSemanticaG2 lex = new analiseSintaticaSemanticaG2(new ANTLRFileStream("C:\\Users\\Franciele\\code\\analisador-sintatico-semantico\\output\\__Test___input.txt", "UTF8"));
+        analiseSintaticaSemanticaG2Lexer lex = new analiseSintaticaSemanticaG2Lexer(new ANTLRFileStream("C:\\Users\\Franciele\\code\\analisador-sintatico-semantico\\output\\__Test___input.txt", "UTF8"));
         CommonTokenStream tokens = new CommonTokenStream(lex);
 
- g = new (tokens, 49100, null);
+        analiseSintaticaSemanticaG2Parser g = new analiseSintaticaSemanticaG2Parser(tokens, 49100, null);
         try {
-            g.DO();
+            g.atribuicao();
         } catch (RecognitionException e) {
             e.printStackTrace();
         }
