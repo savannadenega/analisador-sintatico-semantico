@@ -4,20 +4,46 @@ options {
 	language=Java;
 }
 
-prog returns [ double v ]:
+@members{
+	int x;
+	int y;
+}
 
-	(e = expr {$v = $e.v;} {System.out.println("Resultado: " + $v);}  NEWLINE*)+
-	;
+/*
+Parser rules - Em minúsculo
 
-expr returns [ double v ]:
-	INT {$v = Double.parseDouble( $INT.text);} ('+' e = expr {$v += $e.v;} | '-' e = expr {$v -= $e.v;} | '*' e = expr {$v *= $e.v;} | '/' e = expr {$v /= $e.v;})
-    |	INT {$v = Double.parseDouble( $INT.text);}
+There is a name, a colon, the definition of the rule and a terminating semicolon
+name :	 
+;
+
+*/
 
 
-    |	'(' e = expr {$v = $e.v;} ')'
-    ;
-NEWLINE : ('\r' | '\n')+ ;
-INT     : ('0'..'9')+ ;
+aplicacomando :
+    	( frente { y += $INT; }) ( (entao | apos) aplicacomando)
+    	| ( esquerda { x -= $INT; }) ( (entao | apos) aplicacomando)
+    	| ( direita { x += $INT; }) ( (entao | apos) aplicacomando)
+    	| ( tras { Y -= $INT; }) ( (entao | apos) aplicacomando)
+    	;
+
+/*
+Lexer rules - Em maiúsculo
+Lexer rules are analyzed in the order that they appear
+*/
+
+entao	:	 	'ENTAO';
+apos	:	 	'APOS';
+INT	: 		('0'..'9')+ ;
+whitespace:      	(' ' | '\t') ;
+newline: 		('\r' '\n' | '\r')+ ;
+frente:	 	'FRENTE' whitespace INT newline ;
+esquerda:	'ESQUERDA' whitespace INT newline ;
+direita:	'DIREITA' whitespace INT newline ;
+tras:		'TRAS' whitespace INT newline ;
+
+/*
+Testes
+*/
 
 /* EXEMPLO DE ENTRADA (Input) no ANTLRWorks 1.5.2:
 	3+2*(4+1-11)
