@@ -1,3 +1,5 @@
 .DS_Store
 output/__Test___input.txt
 output/__Test__.java
+/output
+output/

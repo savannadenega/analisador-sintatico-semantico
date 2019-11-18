@@ -5,7 +5,7 @@ Projeto para desenvolvimento de uma aplicação de análise sintática e léxica
 
 ### Ferramentas utilizadas:
 
-- Software (ANTLR)[https://www.antlr.org/]
+- Software [ANTLR](https://www.antlr.org/)
 
 ### Como utilizar:
 
@@ -17,4 +17,4 @@ Projeto para desenvolvimento de uma aplicação de análise sintática e léxica
 
 ### Materiais de consulta:
 
-Explicações sobre a aplicação ANTLR: [https://github.com/antlr/antlr4/blob/master/doc/getting-started.md]
+Explicações sobre a aplicação ANTLR: https://github.com/antlr/antlr4/blob/master/doc/getting-started.md
