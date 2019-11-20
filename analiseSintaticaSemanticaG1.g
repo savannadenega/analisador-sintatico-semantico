@@ -5,53 +5,68 @@ options {
 }
 
 @members{
-	int x;
-	int y;
+	int x = 0;
+	int y = 0;
+	int comandonumero = 1;
+	String sentidoantes = "";
+	String operacaoaritmeticaantes = "";
+	int valorantes = 0;
+	String sentidodepois = "";
+	String operacaoaritmeticadepois = "";
+	int valordepois = 0;
+	String simbolomais = "+";
+	String simbolomenos = "-";
+	String simbolox = "x";
+	String simboloy = "y";
 }
 
-/*
-Parser rules - Em minúsculo
-
-There is a name, a colon, the definition of the rule and a terminating semicolon
-name :	 
-;
-
-*/
-
-
-aplicacomando :
-    	( frente { y += $INT; }) ( (entao | apos) aplicacomando)
-    	| ( esquerda { x -= $INT; }) ( (entao | apos) aplicacomando)
-    	| ( direita { x += $INT; }) ( (entao | apos) aplicacomando)
-    	| ( tras { Y -= $INT; }) ( (entao | apos) aplicacomando)
+verificacomando :
+    	determinacomandoantes verificacomandointermediariowhitespace verificacomandointermediario
     	;
+    	
+determinacomandoantes :
+	FRENTE WHITESPACE INT {sentidoantes = simbolox; operacaoaritmeticaantes = simbolomais; valorantes = Integer.parseInt( $INT.text); System.out.println(sentidoantes + " " + operacaoaritmeticaantes + " " + valorantes);}
+	;
 
-/*
-Lexer rules - Em maiúsculo
-Lexer rules are analyzed in the order that they appear
-*/
+verificacomandointermediariowhitespace :	
+	WHITESPACE 
+	;
 
-entao	:	 	'ENTAO';
-apos	:	 	'APOS';
-INT	: 		('0'..'9')+ ;
-whitespace:      	(' ' | '\t') ;
-newline: 		('\r' '\n' | '\r')+ ;
-frente:	 	'FRENTE' whitespace INT newline ;
-esquerda:	'ESQUERDA' whitespace INT newline ;
-direita:	'DIREITA' whitespace INT newline ;
-tras:		'TRAS' whitespace INT newline ;
+verificacomandointermediario :	
+	APOS WHITESPACE determinacomandodepois aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes]
+	| ENTAO WHITESPACE determinacomandodepois aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois]
+	| NEWLINE aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] 
+	;
 
-/*
-Testes
-*/
+determinacomandodepois :
+	FRENTE WHITESPACE INT NEWLINE {sentidodepois = simbolox; operacaoaritmeticadepois = simbolomais; valordepois = Integer.parseInt( $INT.text);}
+	;
 
-/* EXEMPLO DE ENTRADA (Input) no ANTLRWorks 1.5.2:
-	3+2*(4+1-11)
-	2+1-7
-	2/(1+3)
+aplicacomando[String sentido, String operacaoaritmetica, int valor]:	
+	{ System.out.println(sentidoantes + " " + operacaoaritmeticaantes + " " + valorantes);
+	System.out.println(sentido + " " + operacaoaritmetica + " " + valor);
+	if(sentido.equalsIgnoreCase(simbolox)){
+		System.out.println("Passou pelo x");
+		if(operacaoaritmetica.equals(simbolomais)){
+			System.out.println("Passou pelo +");
+			x += valor;
+		}
+	}
+	}
+	imprimeresultado
+	;
 
-  GERA COMO SA�DA (Output) no ANTLRWorks 1.5.2:
-	Resultado: -9.0
-	Resultado: -4.0
-	Resultado: 0.5
-*/
+
+imprimeresultado :
+	{System.out.println("Comando número: " + comandonumero + " | x: " + x + " | y: " + y); comandonumero++;}
+	;	
+
+FRENTE 	:	'FRENTE';
+TRAS 	:	'TRAS';
+ESQUERDA:	'ESQUERDA';
+DIREITA :	'DIREITA';
+ENTAO	:	'ENTAO';
+APOS	:	'APOS';
+INT	: 	('0'..'9')+ ;
+WHITESPACE:     (' ' | '\t') ;
+NEWLINE: 	('\r' '\n' | '\r')+ ;
