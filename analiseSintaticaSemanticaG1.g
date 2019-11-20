@@ -21,35 +21,53 @@ options {
 }
 
 verificacomando :
-    	determinacomandoantes verificacomandointermediariowhitespace verificacomandointermediario
+    	determinacomandoantes verificacomandointermediariowhitespace
     	;
     	
 determinacomandoantes :
-	FRENTE WHITESPACE INT {sentidoantes = simbolox; operacaoaritmeticaantes = simbolomais; valorantes = Integer.parseInt( $INT.text); System.out.println(sentidoantes + " " + operacaoaritmeticaantes + " " + valorantes);}
+	FRENTE WHITESPACE INT {sentidoantes = simbolox; operacaoaritmeticaantes = simbolomais; valorantes = Integer.parseInt( $INT.text); System.out.println("TOKEN ANTES DETECTADO: " + sentidoantes + " " + operacaoaritmeticaantes + "= " + valorantes);}
+	| TRAS WHITESPACE INT {sentidoantes = simbolox; operacaoaritmeticaantes = simbolomenos; valorantes = Integer.parseInt( $INT.text); System.out.println("TOKEN ANTES DETECTADO: " + sentidoantes + " " + operacaoaritmeticaantes + "= " + valorantes);}
+	| ESQUERDA WHITESPACE INT {sentidoantes = simboloy; operacaoaritmeticaantes = simbolomenos; valorantes = Integer.parseInt( $INT.text); System.out.println("TOKEN ANTES DETECTADO: " + sentidoantes + " " + operacaoaritmeticaantes + "= " + valorantes);}
+	| DIREITA WHITESPACE INT {sentidoantes = simboloy; operacaoaritmeticaantes = simbolomais; valorantes = Integer.parseInt( $INT.text); System.out.println("TOKEN ANTES DETECTADO: " + sentidoantes + " " + operacaoaritmeticaantes + "= " + valorantes);}
 	;
 
 verificacomandointermediariowhitespace :	
-	WHITESPACE 
+	WHITESPACE verificacomandointermediario
+	| verificacomandointermediario
 	;
 
 verificacomandointermediario :	
-	APOS WHITESPACE determinacomandodepois aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes]
-	| ENTAO WHITESPACE determinacomandodepois aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois]
-	| NEWLINE aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] 
+	APOS WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: APOS");} determinacomandodepois aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] 
+	| ENTAO WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: ENTAO");} determinacomandodepois aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] 
+	| NEWLINE {System.out.println("TOKEN FINAL DETECTADO: NEWLINE");} aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes]
 	;
 
 determinacomandodepois :
-	FRENTE WHITESPACE INT NEWLINE {sentidodepois = simbolox; operacaoaritmeticadepois = simbolomais; valordepois = Integer.parseInt( $INT.text);}
+	FRENTE WHITESPACE INT NEWLINE {sentidodepois = simbolox; operacaoaritmeticadepois = simbolomais; valordepois = Integer.parseInt( $INT.text); System.out.println("TOKEN DEPOIS DETECTADO: " + sentidodepois + " " + operacaoaritmeticadepois + "= " + valordepois);}
+	| TRAS WHITESPACE INT NEWLINE {sentidodepois = simbolox; operacaoaritmeticadepois = simbolomenos; valordepois = Integer.parseInt( $INT.text); System.out.println("TOKEN DEPOIS DETECTADO: " + sentidodepois + " " + operacaoaritmeticadepois + "= " + valordepois);}
+	| ESQUERDA WHITESPACE INT NEWLINE {sentidodepois = simboloy; operacaoaritmeticadepois = simbolomenos; valordepois = Integer.parseInt( $INT.text); System.out.println("TOKEN DEPOIS DETECTADO: " + sentidodepois + " " + operacaoaritmeticadepois + "= " + valordepois);}
+	| DIREITA WHITESPACE INT NEWLINE {sentidodepois = simboloy; operacaoaritmeticadepois = simbolomais; valordepois = Integer.parseInt( $INT.text); System.out.println("TOKEN DEPOIS DETECTADO: " + sentidodepois + " " + operacaoaritmeticadepois + "= " + valordepois);}
 	;
 
 aplicacomando[String sentido, String operacaoaritmetica, int valor]:	
-	{ System.out.println(sentidoantes + " " + operacaoaritmeticaantes + " " + valorantes);
-	System.out.println(sentido + " " + operacaoaritmetica + " " + valor);
+	{System.out.println("\nCOMANDO APLICADO: " + sentido + " " + operacaoaritmetica + "= " + valor);
 	if(sentido.equalsIgnoreCase(simbolox)){
-		System.out.println("Passou pelo x");
+		System.out.println("COMANDO: Reconheceu x");
 		if(operacaoaritmetica.equals(simbolomais)){
-			System.out.println("Passou pelo +");
+			System.out.println("COMANDO: Reconheceu +");
 			x += valor;
+		}else if(operacaoaritmetica.equals(simbolomenos)){
+			System.out.println("COMANDO: Reconheceu -");
+			x -= valor;
+		}
+	}else if(sentido.equalsIgnoreCase(simboloy)){
+		System.out.println("COMANDO: Reconheceu y");
+		if(operacaoaritmetica.equals(simbolomais)){
+			System.out.println("COMANDO: Reconheceu +");
+			y += valor;
+		} else if(operacaoaritmetica.equals(simbolomenos)){
+			System.out.println("COMANDO: Reconheceu -");
+			y -= valor;
 		}
 	}
 	}
@@ -58,7 +76,7 @@ aplicacomando[String sentido, String operacaoaritmetica, int valor]:
 
 
 imprimeresultado :
-	{System.out.println("Comando número: " + comandonumero + " | x: " + x + " | y: " + y); comandonumero++;}
+	{System.out.println("\nFINAL | COMANDO NUMERO: " + comandonumero + " | Distância percorrida TOTAL  x: " + x + "  y: " + y + "\n"); comandonumero++;}
 	;	
 
 FRENTE 	:	'FRENTE';
