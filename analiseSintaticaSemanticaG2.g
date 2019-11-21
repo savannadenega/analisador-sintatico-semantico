@@ -4,8 +4,12 @@ options {
     language=Java;
 }
 
-
-
+@parser::members {
+  @Override
+  public void reportError(RecognitionException e) {
+    System.out.println("\nEXCECAO SINTATICA/SEMANTICA: " + e + "\n");
+  }
+  	}
 parse
  	: prog EOF
  	;
@@ -19,7 +23,7 @@ stat
 	|teste
 	|relational_expression
 	|aritmetic_expression
-	|OTHER {System.err.println("Caractere não reconhecido: " + $OTHER.text);}
+	//|OTHER {System.err.println("Caractere não reconhecido: " + $OTHER.text);}
 	|iteracao
 	;
 	
@@ -31,7 +35,7 @@ atribuicao
 
 	
 teste
-	:(IF relational_expression THEN comando+)(SEMI)* (ELSE comando+ (SEMI)*)*
+	:(IF relational_expression THEN comando+)(SEMI)* (ELSE comando+ (SEMI))
 	;
 	
 iteracao
@@ -79,10 +83,21 @@ CONST :	('0'..'9')+ ;
 VAR  :	('a'..'z')+ ;
 
 WS  :	(' '|'\n'|'\r')+ {skip();} ;
-OTHER
- : . 
- ;
- 
+
+
+FallThrough
+@after{
+  throw new RuntimeException(String.format(
+      "Encountered an illegal char on line \%d, column \%d: '\%s'", 
+      getLine(), getCharPositionInLine(), getText()
+    )
+  );
+}
+  :  .
+  ;
+  
+  
+  
  
  
  
