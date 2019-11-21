@@ -104,10 +104,10 @@ NEWLINE: 	('\r' '\n' | '\r')+ ;
 FallThrough
 @after{
   throw new RuntimeException(String.format(
-      "Encountered an illegal char on line \%d, column \%d: '\%s'", 
+      "ENCONTRADO UM CARACTERE ILEGAL NA LINHA [\%d] COLUNA [\%d]: ['\%s']", 
       getLine(), getCharPositionInLine(), getText()
     )
   );
 }
-  :  . // match any char not matched by Number, Id or Space
+  :  .
   ;
