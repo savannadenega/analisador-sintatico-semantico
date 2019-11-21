@@ -24,6 +24,14 @@ options {
 	String simboloy = "y";
 }
 
+parse 	: 
+	prog EOF
+ 	;
+ 	
+prog  	: 
+   	verificacomando* 
+   	;
+
 verificacomando :
     	determinacomandoantes verificacomandointermediariowhitespace
     	;
@@ -42,7 +50,7 @@ verificacomandointermediariowhitespace :
 
 verificacomandointermediario :	
 	APOS WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: APOS");} determinacomandodepois aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes]
-	| ENTAO WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: ENTAO");} determinacomandodepois aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] 
+	| ENTAO WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: ENTAO");} determinacomandodepois aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois]
 	| NEWLINE {System.out.println("TOKEN FINAL DETECTADO: NEWLINE");} aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes]
 	;
 
