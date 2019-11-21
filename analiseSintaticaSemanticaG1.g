@@ -64,21 +64,19 @@ determinacomandodepois :
 aplicacomando[String sentido, String operacaoaritmetica, int valor]:	
 	{System.out.println("\nCOMANDO APLICADO: " + sentido + " " + operacaoaritmetica + "= " + valor);
 	if(sentido.equalsIgnoreCase(simbolox)){
-		System.out.println("COMANDO: Reconheceu x");
 		if(operacaoaritmetica.equals(simbolomais)){
-			System.out.println("COMANDO: Reconheceu +");
+			System.out.println("COMANDO: Andou para frente " + x + " passos");
 			x += valor;
 		}else if(operacaoaritmetica.equals(simbolomenos)){
-			System.out.println("COMANDO: Reconheceu -");
+			System.out.println("COMANDO: Virou 180 graus e andou " + x + " passos" );
 			x -= valor;
 		}
 	}else if(sentido.equalsIgnoreCase(simboloy)){
-		System.out.println("COMANDO: Reconheceu y");
 		if(operacaoaritmetica.equals(simbolomais)){
-			System.out.println("COMANDO: Reconheceu +");
+			System.out.println("COMANDO: Virou 90 graus para direita e andou " + y + " passos" );
 			y += valor;
 		} else if(operacaoaritmetica.equals(simbolomenos)){
-			System.out.println("COMANDO: Reconheceu -");
+			System.out.println("COMANDO: Virou 90 graus para esquerda e andou " + y + " passos" );
 			y -= valor;
 		}
 	}
