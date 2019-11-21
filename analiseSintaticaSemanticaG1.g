@@ -4,8 +4,12 @@ options {
 	language=Java;
 }
 
-@members{
-	int x = 0;
+@parser::members {
+  @Override
+  public void reportError(RecognitionException e) {
+    System.out.println("\nEXCECAO SINTATICA/SEMANTICA: " + e + "\n");
+  }
+  	int x = 0;
 	int y = 0;
 	int comandonumero = 1;
 	String sentidoantes = "";
@@ -37,7 +41,7 @@ verificacomandointermediariowhitespace :
 	;
 
 verificacomandointermediario :	
-	APOS WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: APOS");} determinacomandodepois aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] 
+	APOS WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: APOS");} determinacomandodepois aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes]
 	| ENTAO WHITESPACE {System.out.println("TOKEN INTERMEDIARIO DETECTADO: ENTAO");} determinacomandodepois aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes] aplicacomando[sentidodepois,operacaoaritmeticadepois,valordepois] 
 	| NEWLINE {System.out.println("TOKEN FINAL DETECTADO: NEWLINE");} aplicacomando[sentidoantes,operacaoaritmeticaantes,valorantes]
 	;
@@ -88,3 +92,14 @@ APOS	:	'APOS';
 INT	: 	('0'..'9')+ ;
 WHITESPACE:     (' ' | '\t') ;
 NEWLINE: 	('\r' '\n' | '\r')+ ;
+
+FallThrough
+@after{
+  throw new RuntimeException(String.format(
+      "Encountered an illegal char on line \%d, column \%d: '\%s'", 
+      getLine(), getCharPositionInLine(), getText()
+    )
+  );
+}
+  :  . // match any char not matched by Number, Id or Space
+  ;
