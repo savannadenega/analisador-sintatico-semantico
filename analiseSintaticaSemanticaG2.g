@@ -1,52 +1,66 @@
 grammar analiseSintaticaSemanticaG2;
+
 options {
     language=Java;
 }
 
 
-	
-aritmetic_expression
-	:  CONST OPERADOR_ARITMETICO  aritmetic_expression  
-	|  VAR OPERADOR_ARITMETICO aritmetic_expression
-	|  aritmetic_expression OPERADOR_ARITMETICO aritmetic_expression
-	|  ABRE_PARENTESE aritmetic_expression FECHA_PARENTESE
-	|  CONST
-	|  VAR
-	;
-	
+
+parse
+ 	: prog EOF
+ 	;
+
  
+prog: 
+   stat* ;
+
+stat	
+	:atribuicao 
+	|teste
+	|relational_expression
+	|aritmetic_expression
+	|OTHER {System.err.println("Caractere não reconhecido: " + $OTHER.text);}
+	|iteracao
+	;
+	
+
 atribuicao
-	: VAR ':=' aritmetic_expression
-	;
+	: VAR '=' aritmetic_expression SEMI
+	;	
 	
-relational_expression
-	:aritmetic_expression OPERADOR_RELACIONAL aritmetic_expression
-	;
-	
-teste
-	: IF relational_expression THEN (comando PONTOEVIRGULA)+ 
-	| IF relational_expression THEN (comando PONTOEVIRGULA)+ ELSE (comando PONTOEVIRGULA)+
-	;
 
 	
+teste
+	:(IF relational_expression THEN comando+)(SEMI)* (ELSE comando+ (SEMI)*)*
+	;
+	
+iteracao
+	: WHILE relational_expression DO comando+ SEMI
+	;	
+
+
 comando
 	: atribuicao
 	| teste
 	| iteracao
 	;
 	
-iteracao
-	: WHILE relational_expression DO (comando PONTOEVIRGULA)+ 
+relational_expression
+	: VAR OPERADOR_RELACIONAL aritmetic_expression 
+            	        
 	;
 	
 
-	
-
-/*(a) “if” seguido de expressão relacional, seguida de “then”, seguido de lista de um
-ou mais comandos comandos separados por ";" ou
-(b) “if” seguido de expressão relacional, seguida de “then”, seguido de lista de um
-ou mais comandos separados por ";" finalizada por “else” que é seguido por uma nova lista
-de um ou mais comandos separados por ";".*/
+aritmetic_expression
+	: CONST ('*'|'/') aritmetic_expression 
+    	| CONST ('+'|'-') aritmetic_expression
+    	| VAR ('*'|'/') aritmetic_expression
+    	| VAR ('+'|'-') aritmetic_expression
+    	| VAR                    
+    	| CONST                    
+    	| '(' aritmetic_expression ')'         
+    	;
+ 		
 
 
 DO: 'do';
@@ -57,20 +71,18 @@ WHILE: 'while';
 THEN	: 'then';
 
 
-OPERADOR_RELACIONAL:	 '<' | '>' | '>=' | '<=' | '<>' | '=';
-OPERADOR_ARITMETICO:	 '+'|'-'|'*'|'/';
-PONTOEVIRGULA: ';';
-ATRIBUI	:	':=';
+OPERADOR_RELACIONAL:	 '<' | '>' | '>=' | '<=' | '<>' | '==';
+SEMI: ';';
+
 
 CONST :	('0'..'9')+ ;
-VAR  :	('a'..'z') ;
+VAR  :	('a'..'z')+ ;
 
-//WS  :	(' '|'\n'|'\r')+ {skip();} ;
-
-ABRE_PARENTESE : '(';
-FECHA_PARENTESE : ')';
-
-
-
-
-
+WS  :	(' '|'\n'|'\r')+ {skip();} ;
+OTHER
+ : . 
+ ;
+ 
+ 
+ 
+ 
