@@ -7,97 +7,98 @@ options {
 @parser::members {
   @Override
   public void reportError(RecognitionException e) {
-    System.out.println("\nEXCECAO SINTATICA/SEMANTICA: " + e + "\n");
+    //System.out.println("\nEXCECAO SINTATICA/SEMANTICA: " + e + "\n");
+   
   }
-  	}
-parse
- 	: prog EOF
- 	;
+int valor = 0;
+String simb= " ";
+String operador= " ";
+String semi= " ";
+String comando = " ";
+ }
 
  
-prog: 
-   stat* ;
+parse
+  : prog EOF
+  ;
 
-stat	
-	:atribuicao 
-	|teste
-	|relational_expression
-	|aritmetic_expression
-	//|OTHER {System.err.println("Caractere não reconhecido: " + $OTHER.text);}
-	|iteracao
-	;
-	
+ 
+prog:
+   stat* ;
+   
+
+stat
+:atribuicao
+|teste
+|relational_expression
+|aritmetic_expression
+|iteracao
+;
+
 
 atribuicao
-	: VAR '=' aritmetic_expression SEMI
-	;	
-	
+: VAR {simb = $VAR.text; System.out.println("Variavel " + simb + " detectada");}'='{System.out.println("Operador de atribuicao = detectado");} aritmetic_expression SEMI{semi = $SEMI.text; System.out.println("Ponto e virgula " + semi + " detectado");}
+;
 
-	
 teste
-	:(IF relational_expression THEN comando+)(SEMI)* (ELSE comando+ (SEMI))
-	;
-	
+:(IF{comando = $IF.text; System.out.println("Comando " + comando + " detectado");} relational_expression THEN{comando = $THEN.text; System.out.println("Comando " + comando + " detectado");} comando+)(SEMI)* (ELSE{comando = $ELSE.text; System.out.println("Comando " + comando + " detectado");} comando+ (SEMI))
+;
+
+
+
 iteracao
-	: WHILE relational_expression DO comando+ SEMI
-	;	
+: WHILE {comando = $WHILE.text; System.out.println("Comando " + comando + " detectado");}relational_expression DO{comando = $DO.text; System.out.println("Comando " + comando + " detectado");} comando+ SEMI
+;
 
 
 comando
-	: atribuicao
-	| teste
-	| iteracao
-	;
-	
+: atribuicao
+| teste
+| iteracao
+;
+
 relational_expression
-	: VAR OPERADOR_RELACIONAL aritmetic_expression 
-            	        
-	;
-	
+: VAR{simb = $VAR.text; System.out.println("Variavel " + simb + " detectada");} OPERADOR_RELACIONAL {operador = $OPERADOR_RELACIONAL.text; System.out.println("Operador relacional " + operador + " detectado");} aritmetic_expression
+   
+;
+
 
 aritmetic_expression
-	: CONST ('*'|'/') aritmetic_expression 
-    	| CONST ('+'|'-') aritmetic_expression
-    	| VAR ('*'|'/') aritmetic_expression
-    	| VAR ('+'|'-') aritmetic_expression
-    	| VAR                    
-    	| CONST                    
-    	| '(' aritmetic_expression ')'         
-    	;
- 		
-
+: CONST {valor = Integer.parseInt( $CONST.text);System.out.println("Constante " + valor + " detectada");} ('*'{System.out.println("Operador * detectado");}|'/'{System.out.println("Operador / detectado");}) aritmetic_expression
+    | CONST {valor = Integer.parseInt( $CONST.text);System.out.println("Constante " + valor + " detectada");} ('+'{System.out.println("Operador + detectado");}|'-'{System.out.println("Operador - detectado");}) aritmetic_expression
+    | VAR {simb = $VAR.text; System.out.println("Variavel " + simb + " detectada");} ('*'{System.out.println("Operador * detectado");}|'/'{System.out.println("Operador / detectado");}) aritmetic_expression
+    | VAR {simb = $VAR.text; System.out.println("Variavel " + simb + " detectada");} ('+'{System.out.println("Operador + detectado");}|'-'{System.out.println("Operador - detectado");}) aritmetic_expression
+    | VAR {simb = $VAR.text; System.out.println("Variavel " + simb + " detectada");}                  
+    | CONST {valor = Integer.parseInt( $CONST.text);System.out.println("Constante " + valor + " detectada");}                  
+    | '(' {System.out.println("Símbolo ( detectado");}aritmetic_expression ')'{System.out.println("Símbolo ) detectado");}
+         
+    ;
 
 DO: 'do';
 ELSE: 'else';
 IF: 'if';
 RETURN: 'return';
 WHILE: 'while';
-THEN	: 'then';
+THEN : 'then';
 
 
-OPERADOR_RELACIONAL:	 '<' | '>' | '>=' | '<=' | '<>' | '==';
+OPERADOR_RELACIONAL: '<' | '>' | '>=' | '<=' | '<>' | '==';
 SEMI: ';';
 
 
-CONST :	('0'..'9')+ ;
-VAR  :	('a'..'z')+ ;
+CONST : ('0'..'9')+ ;
+VAR  : ('a'..'z')+ ;
 
-WS  :	(' '|'\n'|'\r')+ {skip();} ;
+WS  : (' '|'\n'|'\r')+ {skip();} ;
 
 
 FallThrough
 @after{
   throw new RuntimeException(String.format(
-      "Encountered an illegal char on line \%d, column \%d: '\%s'", 
+      "Caractere ilegal reconhecido na linha \%d, coluna \%d: '\%s'",
       getLine(), getCharPositionInLine(), getText()
-    )
+)
   );
 }
   :  .
   ;
-  
-  
-  
- 
- 
- 
